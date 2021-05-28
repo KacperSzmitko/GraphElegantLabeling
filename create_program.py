@@ -3,13 +3,15 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import json
 import time
+import re
 
 def get_edges(graph):
+    """ Function that returns distinct list of edges names"""
     edges = []
     for vertex in graph.keys():
         for edge in graph[vertex]:
-            if edge['k'] not in edges:
-                edges.append(edge['k'])
+            if edge not in edges:
+                edges.append(edge)
     return edges
 
 def count_time(func):
@@ -20,11 +22,12 @@ def count_time(func):
     return inner
         
 
-def make_program(filename):
-    with open("graph.json") as file:
+def create_program(graph_filename,result_filename):
+    """ Function that reads graph from graph.json """
+    with open(graph_filename) as file:
         graph = json.load(file)
-
-    q = len(graph.keys())
+    edges = get_edges(graph)
+    q = len(edges)
     vertexes = graph.keys() 
     program = ""
     for vertex in vertexes:
@@ -32,27 +35,22 @@ def make_program(filename):
 
     program += "\n"
 
-    edges = get_edges(graph)
-    cleaned_list = []
+    reg = re.compile(r"x[0-9]+")
     for i,edge in enumerate(edges):
-        splited = edge.split("-")
-        cleaned = splited[0] + splited[1]
-        program += f"new_int({cleaned},{1},{q+1})\n"
+        splited = reg.findall(edge)
+        program += f"new_int({edge},{1},{q+1})\n"
         program += f"new_int(t{i},0,{2*q})\n"
         program += f"int_plus({splited[0]},{splited[1]},t{i})\n"
-        program += f"int_mod(t{i},{q+1},{cleaned})\n"
+        program += f"int_mod(t{i},{q+1},{edge})\n"
         program += "\n"
-        if cleaned not in cleaned_list:
-            cleaned_list.append(cleaned)
 
     program += "int_array_allDiff(["
-    for cleaned in cleaned_list:
+    for cleaned in edges:
         program += f"{cleaned},"
     program = program[:-1]
     program += "])\n"
     program += "solve satisfy"
 
-    with open(filename,"w") as file:
+    with open(result_filename,"w") as file:
         file.write(program)
 
-make_program("test.bee")

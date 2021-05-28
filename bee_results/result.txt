@@ -1,0 +1,31 @@
+%  \'''/ //      BumbleBEE       / \_/ \_/ \
+% -(|||)(')     (15/06/2017)     \_/ \_/ \_/
+%   ^^^        by Amit Metodi    / \_/ \_/ \
+%
+%  reading BEE file ... done
+%  load pl-satSolver ... %  encoding BEE model ... done
+%  solving CNF (satisfy) ...
+x1 = 0
+x2 = 7
+x3 = 1
+x4 = 5
+x5 = 1
+x6 = 3
+x1x2 = 7
+t0 = 7
+x1x4 = 5
+t1 = 5
+x2x4 = 3
+t2 = 12
+x2x6 = 1
+t3 = 10
+x3x4 = 6
+t4 = 6
+x3x5 = 2
+t5 = 2
+x5x6 = 4
+t6 = 4
+x2x5 = 8
+t7 = 8
+----------
+==========
