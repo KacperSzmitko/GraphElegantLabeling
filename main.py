@@ -2,7 +2,8 @@ import tkinter as tk
 import json
 from functools import partial
 from os import listdir
-from PIL import ImageTk, Image 
+from pathlib import Path
+from PIL import ImageTk, Image
 from graph_generator import make_graph
 
 # ******************** OPTIONS ********************
@@ -76,11 +77,12 @@ def generateGraphCommand():
     for y in range(0, numberOfVertices.get()):
         vName = "x" + str(y+1)
         graphDict[vName] = []
-        for x in range(0, numberOfVertices.get()):
+        for x in range(y, numberOfVertices.get()):
             eName = "x" + str(x+1)
-            if edgesSelectorMatrix[y][x].get() == True: graphDict[vName].append(vName + eName)
+            if edgesSelectorMatrix[y][x].get(): graphDict[vName].append(vName + eName)
 
     #Get number of last saved graph
+    Path(graphsJSONsFolderName).mkdir(parents=True,exist_ok=True)
     graphNumber = 1
     graphsJSONsFileNames = listdir(graphsJSONsFolderName)
     if graphsJSONsFileNames: graphNumber = max([int(name[5:][:-5]) for name in graphsJSONsFileNames]) + 1
