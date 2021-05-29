@@ -25,8 +25,11 @@ def solve_program(program_filename,graph_filename,bee_result_filename):
     bee_result_path = bee_results_folder_path / bee_result_filename
 
     create_program(graph_path,program_path)
-
-    result = check_output([bee_folder_path,str(program_path)])
+    result = ""
+    try:
+        result = check_output([bee_folder_path,str(program_path)],timeout=10)
+    except:
+        return False
     with open(bee_result_path,'wb') as file:
         file.write(result)
     return result.decode('utf-8')
@@ -35,10 +38,14 @@ def make_graph(program_filename,graph_filename,bee_result_filename,graph_result_
     ''' Solving program from given graph_filename and creates labaled graph '''
     graphs_result_folder_path.mkdir(parents=True,exist_ok=True)
     graph_result_path = graphs_result_folder_path / graph_result_filename
-
     raw_program = solve_program(program_filename,graph_filename,bee_result_filename)
-    raw_program = raw_program.splitlines()[7:-2]
 
+    # Cannot find solution
+    if not raw_program:
+        return False
+
+    # Erase useless lines
+    raw_program = raw_program.splitlines()[7:-2]
     nodes = []
     edges = []
     nodes_labels = {}
@@ -74,4 +81,4 @@ def make_graph(program_filename,graph_filename,bee_result_filename,graph_result_
     nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels,font_color='red')
     plt.axis("off")
     plt.savefig(graph_result_path,format="PNG")
-    return len(edges)
+    return True
