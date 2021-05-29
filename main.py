@@ -31,6 +31,8 @@ root = tk.Tk()
 
 #Define tkinter variables
 numberOfVertices = tk.IntVar()
+numberOfEdgesSelectedString = tk.StringVar()
+
 edgesSelectorMatrix = []
 
 #Define frames
@@ -45,9 +47,15 @@ edgesInputSetFrame = tk.Frame(inputFrame, width=inputFrameWidth)
 
 def edgeSelectorCommand(x, y):
     edgesSelectorMatrix[x][y].set(edgesSelectorMatrix[y][x].get())
+    numberOfEdgesSelected = 0
+    for y in range(0, numberOfVertices.get()):
+        for x in range(y, numberOfVertices.get()):
+            if edgesSelectorMatrix[y][x].get() == True: numberOfEdgesSelected += 1
+    numberOfEdgesSelectedString.set("Edges selected: " + str(numberOfEdgesSelected))
 
 def generateEdgesSelectorsTableCommand(n):
-    generateGraphButton.place(relx=0.5, y=(n*19)+101, anchor=tk.CENTER)
+    numberOfEdgesSelectedText.place(relx=0.5, y=(n*19)+90, anchor=tk.CENTER)
+    generateGraphButton.place(relx=0.5, y=(n*19)+115, anchor=tk.CENTER)
 
     for v in edgesSelectorsTable:
         for e in v: e.grid_forget()
@@ -71,6 +79,9 @@ def generateEdgesSelectorsTableCommand(n):
 def generateGraphCommand():
     #Graph result image global holder
     global graphResultImage
+
+    #Clean canvas
+    imageCanvas.delete(tk.ALL)
 
     #Create graph matrix dictionary
     graphDict = {}
@@ -97,17 +108,21 @@ def generateGraphCommand():
     with open(graphsJSONsFolderName + "/" + graphJSONFileName, "w") as JSONFile: json.dump(graphDict, JSONFile)
 
     #Generate graph result
-    make_graph(beeProgramFileName, graphJSONFileName, beeResultFileName, graphResultFileName)
-
-    #Display graph result image
-    graphResultImage = ImageTk.PhotoImage(Image.open(graphsResultsFolderName + "/" + graphResultFileName))
-    imageCanvas.create_image(0, 0, image=graphResultImage, anchor=tk.NW)
+    if make_graph(beeProgramFileName, graphJSONFileName, beeResultFileName, graphResultFileName) == True:
+        #Display graph result image
+        graphResultImage = ImageTk.PhotoImage(Image.open(graphsResultsFolderName + "/" + graphResultFileName))
+        imageCanvas.create_image(0, 0, image=graphResultImage, anchor=tk.NW)
+    else:
+        #Display error
+        imageCanvas.create_text(outputFrameWidth/2, outputFrameHeight/2, text="Solution not found", font="Times 40 bold")
+    
 
 #Define widgets
 numberOfVerticesText = tk.Label(verticesInputFrame, text="Number of vertices:")
 numberOfVerticesMenu = tk.OptionMenu(verticesInputFrame, numberOfVertices, *range(minNumberOfVertices, maxNumberOfVertices+1), command=generateEdgesSelectorsTableCommand)
 edgesInputText = tk.Label(edgesInputTextFrame, text="Select edges")
 edgesSelectorsTable = []
+numberOfEdgesSelectedText = tk.Label(inputFrame, textvariable=numberOfEdgesSelectedString)
 generateGraphButton = tk.Button(inputFrame, text="Generate graph", command=generateGraphCommand)
 imageCanvas = tk.Canvas(outputFrame, width=outputFrameWidth, height=outputFrameHeight)
 
@@ -135,6 +150,7 @@ def generateBaseElements():
 #Set default values
 def setDefaultValues():
     numberOfVertices.set(defaultNumberOfVertices)
+    numberOfEdgesSelectedString.set("Edges selected: 0")
 
 def main():
     root.title("Elegant labeling")

@@ -130,3 +130,10 @@ dmypy.json
 
 # vscode
 .vscode/
+
+# program
+bee_results/
+graphs/
+graphs_results/
+bee/data/
+
