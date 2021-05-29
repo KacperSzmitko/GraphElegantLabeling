@@ -9,7 +9,7 @@ import matplotlib.colors as mcolors
 programs_folder_path = Path("./bee/data")
 graphs_folder_path = Path("./graphs")
 bee_results_folder_path = Path("./bee_results")
-graphs_result_folder_path = Path("./result_graphs")
+graphs_result_folder_path = Path("./graphs_results")
 
 def solve_program(program_filename,graph_filename,bee_result_filename):
     ''' Creates program from given graph and solves it'''
