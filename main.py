@@ -86,6 +86,12 @@ def generateGraphCommand():
     #Create graph matrix dictionary
     graphDict = {}
     for y in range(0, numberOfVertices.get()):
+        emptyV = True
+        for i in range(0, numberOfVertices.get()):
+            if edgesSelectorMatrix[y][i].get(): emptyV = False
+        for i in range(0, numberOfVertices.get()):
+            if edgesSelectorMatrix[i][y].get(): emptyV = False
+        if emptyV: continue
         vName = "x" + str(y+1)
         graphDict[vName] = []
         for x in range(y, numberOfVertices.get()):
