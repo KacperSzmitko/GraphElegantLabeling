@@ -1,3 +1,4 @@
+import subprocess
 from create_program import create_program
 from pathlib import Path
 from subprocess import check_output
@@ -6,10 +7,13 @@ import re
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+
 programs_folder_path = Path("./bee/data")
 graphs_folder_path = Path("./graphs")
 bee_results_folder_path = Path("./bee_results")
 graphs_result_folder_path = Path("./graphs_results")
+
+
 
 def solve_program(program_filename,graph_filename,bee_result_filename):
     ''' Creates program from given graph and solves it'''
@@ -26,10 +30,14 @@ def solve_program(program_filename,graph_filename,bee_result_filename):
 
     create_program(graph_path,program_path)
     result = ""
+
+    proc = subprocess.Popen([bee_folder_path,str(program_path)],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
-        result = check_output([bee_folder_path,str(program_path)],timeout=10)
+        (result, error) = proc.communicate(timeout=10)
     except:
         return False
+
+
     with open(bee_result_path,'wb') as file:
         file.write(result)
     return result.decode('utf-8')
